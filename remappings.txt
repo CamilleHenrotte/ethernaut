@@ -1,7 +1,5 @@
 ds-test/=lib/openzeppelin-contracts/lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/
-openzeppelin-contracts/=lib/openzeppelin-contracts/
-forge-std/=lib/forge-std/src/
 openzeppelin-contracts-06/=lib/openzeppelin-contracts-06/contracts/
-openzeppelin-contracts-08/=lib/openzeppelin-contracts-08/contracts/
-openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/
+openzeppelin-contracts-08/=lib/openzeppelin-contracts-08/
+openzeppelin-contracts/=lib/openzeppelin-contracts/
