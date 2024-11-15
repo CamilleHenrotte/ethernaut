@@ -1,1 +1,0 @@
-Desbloqueie o cofre para passar de nível!
