@@ -1,17 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./levels/base/Level.sol";
+import "./base/Level.sol";
 import "openzeppelin-contracts-08/access/Ownable.sol";
 
 interface IStatistics {
     function saveNewLevel(address level) external;
 
-    function createNewInstance(address instance, address level, address player) external;
+    function createNewInstance(
+        address instance,
+        address level,
+        address player
+    ) external;
 
-    function submitFailure(address instance, address level, address player) external;
+    function submitFailure(
+        address instance,
+        address level,
+        address player
+    ) external;
 
-    function submitSuccess(address instance, address level, address player) external;
+    function submitSuccess(
+        address instance,
+        address level,
+        address player
+    ) external;
 }
 
 contract Ethernaut is Ownable {
@@ -45,8 +57,16 @@ contract Ethernaut is Ownable {
 
     mapping(address => EmittedInstanceData) public emittedInstances;
 
-    event LevelInstanceCreatedLog(address indexed player, address indexed instance, address indexed level);
-    event LevelCompletedLog(address indexed player, address indexed instance, address indexed level);
+    event LevelInstanceCreatedLog(
+        address indexed player,
+        address indexed instance,
+        address indexed level
+    );
+    event LevelCompletedLog(
+        address indexed player,
+        address indexed instance,
+        address indexed level
+    );
 
     function createLevelInstance(Level _level) public payable {
         // Ensure level is registered.
@@ -56,7 +76,11 @@ contract Ethernaut is Ownable {
         address instance = _level.createInstance{value: msg.value}(msg.sender);
 
         // Store emitted instance relationship with player and level.
-        emittedInstances[instance] = EmittedInstanceData(msg.sender, _level, false);
+        emittedInstances[instance] = EmittedInstanceData(
+            msg.sender,
+            _level,
+            false
+        );
 
         statistics.createNewInstance(instance, address(_level), msg.sender);
 
@@ -67,7 +91,10 @@ contract Ethernaut is Ownable {
     function submitLevelInstance(address payable _instance) public {
         // Get player and level.
         EmittedInstanceData storage data = emittedInstances[_instance];
-        require(data.player == msg.sender, "This instance doesn't belong to the current user"); // instance was emitted for this player
+        require(
+            data.player == msg.sender,
+            "This instance doesn't belong to the current user"
+        ); // instance was emitted for this player
         require(data.completed == false, "Level has been completed already"); // not already submitted
 
         // Have the level check the instance.
@@ -75,11 +102,19 @@ contract Ethernaut is Ownable {
             // Register instance as completed.
             data.completed = true;
 
-            statistics.submitSuccess(_instance, address(data.level), msg.sender);
+            statistics.submitSuccess(
+                _instance,
+                address(data.level),
+                msg.sender
+            );
             // Notify success via logs.
             emit LevelCompletedLog(msg.sender, _instance, address(data.level));
         } else {
-            statistics.submitFailure(_instance, address(data.level), msg.sender);
+            statistics.submitFailure(
+                _instance,
+                address(data.level),
+                msg.sender
+            );
         }
     }
 }

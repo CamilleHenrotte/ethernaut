@@ -14,3 +14,15 @@ contract Telephone {
         }
     }
 }
+
+contract TelephoneIntermediate {
+    Telephone public telephone;
+
+    constructor(address _telephone) {
+        telephone = Telephone(_telephone);
+    }
+
+    function changeOwner(address _owner) public {
+        telephone.changeOwner(_owner);
+    }
+}

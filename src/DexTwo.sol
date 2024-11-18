@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-import "openzeppelin-contracts-08/access/Ownable.sol";
+import {Ownable} from "openzeppelin-contracts-08/access/Ownable.sol";
 
 contract DexTwo is Ownable {
     address public token1;

